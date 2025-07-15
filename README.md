@@ -1,8 +1,8 @@
 - 👋 Hi, I’m @Ian0v
-- 👀 I’m interested in trading
-- 🌱 I’m currently learning forex
+- 👀 I’m interested in automations
+- 🌱 I’m currently learning n8n
 - 💞️ I’m looking to collaborate on website and app development 
-- 📫 How to reach me miaafilahk. 4@gmail.com
+- 📫 How to reach me ${email}
 - 
 
 <!---
