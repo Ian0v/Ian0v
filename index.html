@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Step Appointment Form</title>
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    .form-container { max-width: 500px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .buttons { margin-top: 20px; }
+    .buttons button { padding: 10px 20px; margin: 0 5px; border: none; border-radius: 4px; cursor: pointer; }
+    .buttons button:disabled { opacity: 0.5; cursor: default; }
+    #progress-bar { display: flex; margin-bottom: 20px; counter-reset: step; }
+    #progress-bar .progress-step { flex: 1; text-align: center; position: relative; }
+    #progress-bar .progress-step::before { content: counter(step); counter-increment: step; width: 30px; height: 30px; line-height: 30px; border: 2px solid #ccc; border-radius: 50%; display: inline-block; background: white; }
+    #progress-bar .progress-step::after { content: ''; position: absolute; width: 100%; height: 2px; background: #ccc; top: 15px; left: -50%; z-index: -1; }
+    #progress-bar .progress-step:first-child::after { content: none; }
+    #progress-bar .progress-step.active::before { border-color: #4CAF50; }
+    #progress-bar .progress-step.active + .progress-step::after { background: #4CAF50; }
+    .error { color: red; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div id="progress-bar">
+      <div class="progress-step active">Step 1</div>
+      <div class="progress-step">Step 2</div>
+      <div class="progress-step">Step 3</div>
+    </div>
+
+    <form id="appointment-form">
+      <!-- Step 1 -->
+      <div class="step active">
+        <h3>Contact Info</h3>
+        <label for="name">Name *</label><br>
+        <input type="text" id="name" name="name" required><div class="error" id="error-name"></div><br><br>
+
+        <label for="email">Email *</label><br>
+        <input type="email" id="email" name="email" required><div class="error" id="error-email"></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <h3>Appointment Details</h3>
+        <label for="date">Select Date *</label><br>
+        <input type="text" id="date" name="date" required placeholder="Select a date"><div class="error" id="error-date"></div><br><br>
+
+        <label for="time">Select Time *</label><br>
+        <input type="text" id="time" name="time" required placeholder="Select time"><div class="error" id="error-time"></div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <h3>Preferences</h3>
+        <label for="method">Follow-up Method *</label><br>
+        <select id="method" name="method" required>
+          <option value="">--Choose--</option>
+          <option value="email">Email</option>
+          <option value="sms">SMS</option>
+        </select><div class="error" id="error-method"></div>
+      </div>
+
+      <div class="buttons">
+        <button type="button" id="prev-btn" disabled>Previous</button>
+        <button type="button" id="next-btn">Next</button>
+        <button type="submit" id="submit-btn" style="display:none;">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize flatpickr
+      flatpickr('#date', { dateFormat: 'Y-m-d', minDate: 'today' });
+      flatpickr('#time', { enableTime: true, noCalendar: true, dateFormat: 'H:i', time_24hr: false });
+
+      const form = document.getElementById('appointment-form');
+      const steps = Array.from(document.querySelectorAll('.step'));
+      const nextBtn = document.getElementById('next-btn');
+      const prevBtn = document.getElementById('prev-btn');
+      const submitBtn = document.getElementById('submit-btn');
+      const progressSteps = Array.from(document.querySelectorAll('.progress-step'));
+      let currentStep = 0;
+
+      function showStep(step) {
+        steps.forEach((s, i) => s.classList.toggle('active', i === step));
+        progressSteps.forEach((p, i) => p.classList.toggle('active', i <= step));
+        prevBtn.disabled = step === 0;
+        nextBtn.style.display = step === steps.length - 1 ? 'none' : 'inline-block';
+        submitBtn.style.display = step === steps.length - 1 ? 'inline-block' : 'none';
+      }
+
+      function validateStep(step) {
+        let valid = true;
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(e => e.textContent = '');
+        const inputs = steps[step].querySelectorAll('input, select');
+        inputs.forEach(input => {
+          if (!input.checkValidity()) {
+            valid = false;
+            const err = document.getElementById('error-' + input.id);
+            err.textContent = input.validationMessage;
+          }
+        });
+        return valid;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (!validateStep(currentStep)) return;
+        currentStep++;
+        showStep(currentStep);
+      });
+
+      prevBtn.addEventListener('click', () => {
+        currentStep--;
+        showStep(currentStep);
+      });
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        if (!validateStep(currentStep)) return;
+        // On submit, redirect to thank-you page
+        window.location.href = 'thank-you.html';
+      });
+
+      showStep(currentStep);
+    });
+  </script>
+</body>
+</html>
