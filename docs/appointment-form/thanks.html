@@ -1,58 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Thank You!</title>
-  <style>
-    body {
-      background: #f2f7f9;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 60px 20px;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 40px 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      color: #4CAF50;
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 1.1em;
-      color: #444;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 30px;
-      text-decoration: none;
-      padding: 10px 20px;
-      background: #4CAF50;
-      color: white;
-      border-radius: 5px;
-    }
-
-    a:hover {
-      background: #43a047;
-    }
-  </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Booking Confirmed</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Thank You!</h1>
-    <p>Your appointment request has been received.</p>
-    <p>We'll be in touch shortly with a confirmation.</p>
-    <a href="./index.html">Back to form</a>
-  </div>
+  <main class="page">
+    <div class="card" style="text-align:center;">
+      <h1 class="title">Thank you</h1>
+      <p class="subtitle">Your appointment is confirmed.</p>
+      <div id="details" style="margin-top:1rem;color:#333"></div>
+      <div style="margin-top:1rem;">
+        <a id="returnBtn" class="btn" href="#">Return to chat</a>
+        <a id="calendarBtn" class="btn primary" href="#">Add to calendar</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Read booking id & optional return link
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || '';
+    const returnUrl = params.get('return') || '';
+
+    document.getElementById('details').innerHTML = `
+      ${id ? `<div><strong>Booking ID:</strong> ${id}</div>` : ''}
+      <div style="margin-top:0.5rem;color:#555">A confirmation email has been sent. You will receive an SMS reminder before your appointment.</div>
+    `;
+    const returnBtn = document.getElementById('returnBtn');
+    if (returnUrl){
+      returnBtn.href = returnUrl;
+      returnBtn.textContent = 'Back to chat';
+    } else {
+      returnBtn.addEventListener('click', (e) => { e.preventDefault(); history.back(); });
+    }
+
+    document.getElementById('calendarBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      // If you want ICS download, you can create an endpoint like /api/ics?id=...
+      alert('Add to calendar link will be sent to your email.'); 
+    });
+  </script>
 </body>
 </html>
