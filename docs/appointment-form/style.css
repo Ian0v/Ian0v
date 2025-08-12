@@ -88,3 +88,17 @@ textarea{min-height:72px;resize:vertical}
   input,select,textarea{padding:0.72rem}
   .row{flex-direction:column}
 }
+/* Alternatives UI */
+.alternatives{margin-top:0.6rem}
+.alt-group{margin-top:0.6rem}
+.alt-group h4{margin:0 0 0.4rem 0;font-size:0.95rem;color:#433a32}
+.alt-list{display:flex;flex-direction:column;gap:0.5rem}
+.alt-btn{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:0.9rem 0.9rem;border-radius:10px;border:1px solid #eee;background:#fff;font-weight:700;
+  font-size:1rem;touch-action:manipulation;
+}
+.alt-btn small{font-weight:600;color:var(--muted);font-size:0.9rem}
+.alt-btn:active{transform:translateY(1px)}
+.alt-btn--primary{border-color:var(--accent);background:linear-gradient(180deg, rgba(184,155,114,0.07), #fff)}
+.alt-note{font-size:0.85rem;color:var(--muted);margin-top:0.4rem}
