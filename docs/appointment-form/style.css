@@ -1,0 +1,90 @@
+:root{
+  --bg:#fbfaf8;
+  --card:#ffffff;
+  --muted:#6f6b68;
+  --accent:#b89b72; /* warm gold */
+  --accent-dark:#a0845f;
+  --radius:12px;
+  --max:480px;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#222;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.4;
+  padding:1rem;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+}
+
+.page{width:100%;max-width:var(--max)}
+
+.hero{
+  text-align:center;
+  margin-bottom:0.75rem;
+}
+.title{
+  font-family: "Playfair Display", serif;
+  font-size:1.5rem;
+  margin:0;
+  color:#433a32;
+}
+.subtitle{
+  margin:0.25rem 0 0;
+  color:var(--muted);
+  font-size:0.9rem;
+}
+
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:1rem;
+  box-shadow:0 6px 22px rgba(17,14,11,0.05);
+  border:1px solid rgba(0,0,0,0.03);
+}
+
+label{display:block;margin-top:0.6rem;font-weight:600;font-size:0.95rem}
+input,select,textarea{
+  margin-top:0.35rem;
+  width:100%;
+  padding:0.8rem;
+  border-radius:10px;
+  border:1px solid #e6e3e0;
+  font-size:1rem;
+  background:transparent;
+}
+textarea{min-height:72px;resize:vertical}
+
+.row{display:flex;gap:0.6rem}
+.col{flex:1}
+
+.hint{color:var(--muted);font-size:0.85rem;margin-top:0.4rem}
+.tiny{font-size:0.8rem}
+.form-errors{color:#8b1e1e;margin-top:0.5rem;font-weight:600}
+
+.actions{margin-top:1rem;display:flex;gap:0.6rem;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:10px;padding:0.9rem 1rem;font-weight:600;border:1px solid transparent}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.primary:active{background:var(--accent-dark)}
+.spinner{
+  width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.4);border-top-color:rgba(255,255,255,0.9);display:inline-block;margin-left:0.6rem;transform:rotate(0);animation:spin 1s linear infinite;visibility:hidden}
+.spinner.visible{visibility:visible}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* accessibility helpers */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* responsive tweaks */
+@media (max-width:420px){
+  .title{font-size:1.35rem}
+  input,select,textarea{padding:0.72rem}
+  .row{flex-direction:column}
+}
