@@ -1,210 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Appointment Form</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f4f8;
-      padding: 20px;
-    }
-
-    .form-container {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .step {
-      display: none;
-    }
-
-    .step.active {
-      display: block;
-    }
-
-    .error-message {
-      color: red;
-      font-size: 0.9em;
-      margin-top: 4px;
-    }
-
-    .progress-bar {
-      height: 8px;
-      background: #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    .progress {
-      height: 100%;
-      width: 0%;
-      background: #4CAF50;
-      transition: width 0.3s;
-    }
-
-    .btn-group {
-      margin-top: 20px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #43a047;
-    }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reserve — Minimalist Barber</title>
+  <meta name="description" content="Book your appointment — Tue–Sun, 07:00–17:00. Fast, mobile-first booking.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="form-container">
-    <div class="progress-bar"><div class="progress" id="progress"></div></div>
-    <form id="appointmentForm">
-      <div class="step active">
-        <label>Full Name: <input type="text" name="name" required></label>
-        <div class="error-message"></div>
+  <main class="page">
+    <header class="hero">
+      <h1 class="title">Reserve Your Spot</h1>
+      <p class="subtitle">Tuesday–Sunday · 07:00–17:00 · 15-minute slots</p>
+    </header>
 
-        <label>Email: <input type="email" name="email" required></label>
-        <div class="error-message"></div>
+    <form id="bookingForm" class="card" novalidate>
+      <div id="status" class="sr-only" aria-live="polite"></div>
+
+      <label for="name">Full name *</label>
+      <input id="name" name="name" type="text" inputmode="text" autocomplete="name" required minlength="2" placeholder="Jane Doe">
+
+      <label for="phone">Phone (for SMS reminders) *</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="+254 7XX XXX XXX">
+
+      <label for="email">Email *</label>
+      <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+
+      <label for="service">Service *</label>
+      <select id="service" name="service" required>
+        <option value="">Choose a service</option>
+        <option value="haircut">Haircut</option>
+        <option value="beard">Beard Trim</option>
+        <option value="both">Haircut + Beard</option>
+      </select>
+
+      <label for="stylist">Preferred stylist</label>
+      <select id="stylist" name="stylist">
+        <option value="">Any</option>
+        <option value="dan">Dan</option>
+        <option value="rita">Rita</option>
+      </select>
+
+      <div class="row">
+        <div class="col">
+          <label for="date">Date *</label>
+          <input id="date" name="date" type="date" required>
+        </div>
+        <div class="col">
+          <label for="time">Time *</label>
+          <select id="time" name="time" required>
+            <option value="">Choose a time</option>
+          </select>
+        </div>
       </div>
 
-      <div class="step">
-        <label>Date: <input type="text" id="datePicker" name="date" required></label>
-        <div class="error-message"></div>
+      <label for="notes">Notes (optional)</label>
+      <textarea id="notes" name="notes" rows="3" maxlength="300" placeholder="Any preferences or allergies?"></textarea>
 
-        <label>Time: <input type="text" id="timePicker" name="time" required></label>
-        <div class="error-message"></div>
+      <div id="holdHint" class="hint tiny">We hold your slot for <strong id="holdTimer">—</strong> after you tap the booking link.</div>
+
+      <!-- Alternatives explanation shown when alternatives exist -->
+      <div id="alternativeExplanation" class="hint tiny" style="display:none;">
+        Clicking one of these will immediately attempt to schedule an appointment at the shown time. If it succeeds, you'll be redirected to a confirmation page.
       </div>
 
-      <div class="step">
-        <label>Message (Optional): <textarea name="message"></textarea></label>
-        <div class="error-message"></div>
+      <div id="alternatives" class="alternatives" aria-live="polite"></div>
 
-        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+      <!-- reCAPTCHA placeholder: replace with your widget -->
+      <div id="captcha-placeholder" class="tiny">• Bot protection enabled on submit</div>
+
+      <div class="actions">
+        <button id="submitBtn" class="btn primary" type="submit" aria-live="polite">
+          <span id="submitText">Confirm booking</span>
+          <span id="spinner" class="spinner" aria-hidden="true"></span>
+        </button>
       </div>
 
-      <div class="btn-group">
-        <button type="button" id="prevBtn">Previous</button>
-        <button type="button" id="nextBtn">Next</button>
-        <button type="submit" id="submitBtn" style="display:none">Submit</button>
-      </div>
+      <div id="errors" class="form-errors" aria-live="assertive"></div>
     </form>
-  </div>
+  </main>
 
-  <script>
-    flatpickr("#datePicker", { dateFormat: "Y-m-d" });
-    flatpickr("#timePicker", { enableTime: true, noCalendar: true, dateFormat: "H:i" });
-
-    const form = document.getElementById("appointmentForm");
-    const steps = document.querySelectorAll(".step");
-    const progress = document.getElementById("progress");
-    const nextBtn = document.getElementById("nextBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const submitBtn = document.getElementById("submitBtn");
-    let currentStep = 0;
-
-    function showStep(index) {
-      steps.forEach((step, i) => {
-        step.classList.toggle("active", i === index);
-      });
-      progress.style.width = ((index + 1) / steps.length) * 100 + "%";
-      prevBtn.style.display = index === 0 ? "none" : "inline-block";
-      nextBtn.style.display = index === steps.length - 1 ? "none" : "inline-block";
-      submitBtn.style.display = index === steps.length - 1 ? "inline-block" : "none";
-    }
-
-    function validateInput(input) {
-      const errorMsg = input.nextElementSibling;
-      if (input.required && !input.value.trim()) {
-        errorMsg.textContent = "This field is required.";
-        return false;
-      }
-      if (input.type === "email" && input.value) {
-        const pattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-        if (!pattern.test(input.value)) {
-          errorMsg.textContent = "Enter a valid email address.";
-          return false;
-        }
-      }
-      errorMsg.textContent = "";
-      return true;
-    }
-
-    form.querySelectorAll("input, textarea").forEach((input) => {
-      const msg = document.createElement("div");
-      msg.className = "error-message";
-      input.insertAdjacentElement("afterend", msg);
-      input.addEventListener("input", () => validateInput(input));
-    });
-
-    nextBtn.addEventListener("click", () => {
-      const inputs = steps[currentStep].querySelectorAll("input, textarea");
-      let valid = true;
-      inputs.forEach((input) => {
-        if (!validateInput(input)) valid = false;
-      });
-      if (valid) {
-        currentStep++;
-        showStep(currentStep);
-      }
-    });
-
-    prevBtn.addEventListener("click", () => {
-      currentStep--;
-      showStep(currentStep);
-    });
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      let valid = true;
-      form.querySelectorAll("input, textarea").forEach((input) => {
-        if (!validateInput(input)) valid = false;
-      });
-
-      const captchaResponse = grecaptcha.getResponse();
-      if (!captchaResponse) {
-        alert("Please complete the CAPTCHA.");
-        valid = false;
-      }
-
-      if (valid) {
-        const formData = new FormData(form);
-        const json = Object.fromEntries(formData.entries());
-        try {
-          const res = await fetch("https://your-n8n-instance.com/webhook/my-form", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(json)
-          });
-          if (res.ok) {
-            window.location.href = "thank-you.html";
-          } else {
-            alert("Something went wrong. Try again.");
-          }
-        } catch (err) {
-          console.error(err);
-          alert("Submission failed. Try again later.");
-        }
-      }
-    });
-
-    showStep(currentStep);
-  </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
